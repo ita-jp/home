@@ -19,7 +19,6 @@ function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, ch
       purpose = message.slice(price.toString().length).trim();
 
   insertCreditCardUsage(new Date(event.timestamp), event.source.userId, purpose, price, spreadSheetId);
-  var rest = selectBudget(spreadSheetId);
 
   UrlFetchApp.fetch(REPLY_URL, {
     'headers': {
@@ -31,17 +30,24 @@ function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, ch
       'replyToken': replyToken,
       'messages': [{
         'type': 'text',
-        'text': `${price}円を「${purpose}」に使ったんですね\n今週の残りは${rest}円です。`
+        'text': `${purpose}に${price}円の支出を登録しました\n\n【残りの予算】\n${createBudgetSummary(spreadSheetId)}`,
       }],
     }),
     });
   return ContentService.createTextOutput(JSON.stringify({'content': 'post ok'})).setMimeType(ContentService.MimeType.JSON);
 }
 
-function selectBudget(spreadSheetId: string) {
+function createBudgetSummary(spreadSheetId: string) {
   var spreadSheet = SpreadsheetApp.openById(spreadSheetId),
-      sheet = spreadSheet.getSheetByName('_workspace');
-  return sheet.getRange("E2").getValue();
+      sheet = spreadSheet.getSheetByName('_workspace'),
+      budgetNames = sheet.getRange(2, 1, 5, 1).getValues(),
+      budget = sheet.getRange(2, 5, 5, 1).getValues(),
+      summary = [];
+  
+  for (var i = 0; i < budgetNames.length; i++) {
+    summary.push(`${budgetNames[i][0]}: ${budget[i][0]}円`);
+  }
+  return summary.join('\n');
 }
 
 function insertCreditCardUsage(timestamp, user, purpose, price, spreadSheetId: string) {
