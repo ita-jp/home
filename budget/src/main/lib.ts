@@ -40,14 +40,8 @@ function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, ch
 function createBudgetSummary(spreadSheetId: string) {
   var spreadSheet = SpreadsheetApp.openById(spreadSheetId),
       sheet = spreadSheet.getSheetByName('_workspace'),
-      budgetNames = sheet.getRange(2, 1, 5, 1).getValues(),
-      budget = sheet.getRange(2, 5, 5, 1).getValues(),
-      summary = [];
-  
-  for (var i = 0; i < budgetNames.length; i++) {
-    summary.push(`${budgetNames[i][0]}: ${budget[i][0]}円`);
-  }
-  return summary.join('\n');
+      budgets = sheet.getRange(2, 1, 5, 5).getValues();
+  return budgets.map(line => `${line[0]}: ${line[4]}円`).join('\n');
 }
 
 function insertCreditCardUsage(timestamp, user, purpose, price, spreadSheetId: string) {
