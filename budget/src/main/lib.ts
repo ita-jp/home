@@ -40,8 +40,8 @@ function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, ch
 
 function selectBudget(spreadSheetId: string) {
   var spreadSheet = SpreadsheetApp.openById(spreadSheetId),
-      sheet = spreadSheet.getSheetByName('budget');
-  return sheet.getRange("B2").getValue();
+      sheet = spreadSheet.getSheetByName('_workspace');
+  return sheet.getRange("E2").getValue();
 }
 
 function insertCreditCardUsage(timestamp, user, purpose, price, spreadSheetId: string) {
