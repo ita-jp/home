@@ -1,11 +1,11 @@
 function doGet() {
 }
 
-function doPost(e: string, accessToken: string, spreadSheetId: string) {
-  return reply(e, accessToken, spreadSheetId);
+function doPost(e: any, channelAccessToken: string, channelSecret: string, spreadSheetId: string) {
+  return reply(e, channelAccessToken, spreadSheetId);
 }
 
-function reply(e: Object, accessToken: String, spreadSheetId: string) {
+function reply(e: any, accessToken: String, spreadSheetId: string) {
   insertAccessLog(e, spreadSheetId);
 
   var event = JSON.parse(e.postData.contents).events[0],
