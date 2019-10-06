@@ -1,12 +1,14 @@
+import 'google-apps-script';
+
 function doGet() {
 }
 
-function doPost(e: any, channelAccessToken: string, channelSecret: string, spreadSheetId: string) {
+function doPost(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, channelSecret: string, spreadSheetId: string) {
   return reply(e, channelAccessToken, spreadSheetId);
 }
 
-function reply(e: any, accessToken: String, spreadSheetId: string) {
-  new AccessLogRepository(spreadSheetId).insert(e);
+function reply(e: GoogleAppsScript.Events.DoPost, accessToken: String, spreadSheetId: string) {
+  new AccessLogRepository(spreadSheetId).insert();
 
   var event = JSON.parse(e.postData.contents).events[0],
       replyToken = event.replyToken,
@@ -56,8 +58,8 @@ class AccessLogRepository {
   private appendRow(row: any) {
     SpreadsheetApp.openById(this.spreadSheetId).getSheetByName('access_log').appendRow(row);
   }
-  insert(content: string) {
+  insert() {
     var date = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd hh:mm:ss');
-    this.appendRow([date, content]);
+    this.appendRow([date]);
   }
 }
