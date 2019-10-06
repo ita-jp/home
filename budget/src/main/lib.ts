@@ -6,7 +6,7 @@ function doPost(e: any, channelAccessToken: string, channelSecret: string, sprea
 }
 
 function reply(e: any, accessToken: String, spreadSheetId: string) {
-  insertAccessLog(e, spreadSheetId);
+  new AccessLogRepository(spreadSheetId).insert(e);
 
   var event = JSON.parse(e.postData.contents).events[0],
       replyToken = event.replyToken,
@@ -49,10 +49,15 @@ function insertCreditCardUsage(timestamp, user, purpose, price, spreadSheetId: s
   accessLogSheet.appendRow([timestamp, user, purpose, price]);
 }
 
-function insertAccessLog(content: string, spreadSheetId: string) {
-  var spreadsheet = SpreadsheetApp.openById(spreadSheetId),
-      accessLogSheet = spreadsheet.getSheetByName('access_log');
 
-  var date = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd hh:mm:ss');
-  accessLogSheet.appendRow([date, content]);
+class AccessLogRepository {
+  constructor(private spreadSheetId: string) {
+  }
+  private appendRow(row: any) {
+    SpreadsheetApp.openById(this.spreadSheetId).getSheetByName('access_log').appendRow(row);
+  }
+  insert(content: string) {
+    var date = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd hh:mm:ss');
+    this.appendRow([date, content]);
+  }
 }
