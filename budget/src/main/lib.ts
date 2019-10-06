@@ -1,5 +1,7 @@
 import 'google-apps-script';
 
+const REPLY_URL = 'https://api.line.me/v2/bot/message/reply';
+
 function doGet() {
 }
 
@@ -19,10 +21,7 @@ function reply(e: GoogleAppsScript.Events.DoPost, accessToken: String, spreadShe
   insertCreditCardUsage(new Date(event.timestamp), event.source.userId, purpose, price, spreadSheetId);
   var rest = selectBudget(spreadSheetId);
 
-  // 応答メッセージ用のAPI URL
-  var url = 'https://api.line.me/v2/bot/message/reply';
-
-  UrlFetchApp.fetch(url, {
+  UrlFetchApp.fetch(REPLY_URL, {
     'headers': {
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer ' + accessToken,
