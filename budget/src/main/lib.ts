@@ -6,10 +6,10 @@ function doGet() {
 }
 
 function doPost(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, channelSecret: string, spreadSheetId: string) {
-  return reply(e, channelAccessToken, spreadSheetId);
+  return reply(e, channelAccessToken, channelSecret, spreadSheetId);
 }
 
-function reply(e: GoogleAppsScript.Events.DoPost, accessToken: String, spreadSheetId: string) {
+function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, chanelSecret: string, spreadSheetId: string) {
   new AccessLogRepository(spreadSheetId).insert();
 
   var event = JSON.parse(e.postData.contents).events[0],
@@ -24,7 +24,7 @@ function reply(e: GoogleAppsScript.Events.DoPost, accessToken: String, spreadShe
   UrlFetchApp.fetch(REPLY_URL, {
     'headers': {
       'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer ' + accessToken,
+      'Authorization': 'Bearer ' + channelAccessToken,
     },
     'method': 'post',
     'payload': JSON.stringify({
