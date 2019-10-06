@@ -31,7 +31,7 @@ function reply(e: GoogleAppsScript.Events.DoPost, accessToken: String, spreadShe
       'replyToken': replyToken,
       'messages': [{
         'type': 'text',
-        'text': price + '円を' + purpose + 'に使ったんですね\n今週の残り' + rest + '円です',
+        'text': `${price}円を「${purpose}」に使ったんですね\n今週の残りは${rest}円です。`
       }],
     }),
     });
