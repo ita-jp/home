@@ -40,7 +40,7 @@ function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, ch
 function createBudgetSummary(spreadSheetId: string) {
   var spreadSheet = SpreadsheetApp.openById(spreadSheetId),
       sheet = spreadSheet.getSheetByName('_workspace'),
-      budgets = sheet.getRange(2, 1, 5, 5).getValues();
+      budgets = sheet.getRange(2, 1, 6, 5).getValues();
   return budgets.map(line => `${line[0]}: ${line[4]}円`).join('\n');
 }
 
