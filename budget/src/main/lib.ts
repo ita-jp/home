@@ -16,9 +16,12 @@ function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, ch
       replyToken = event.replyToken,
       message = event.message.text,
       price = parseInt(message),
-      purpose = message.slice(price.toString().length).trim();
+      lines = message.slice(price.toString().length).trim().split('\n'),
+      purpose = lines.length > 0 ? lines[0] : '',
+      memo = lines.length > 1 ? lines.slice(1).join('\n') : '';
 
-  insertCreditCardUsage(new Date(event.timestamp), event.source.userId, purpose, price, spreadSheetId);
+
+  insertCreditCardUsage(new Date(event.timestamp), event.source.userId, purpose, price, memo, spreadSheetId);
 
   UrlFetchApp.fetch(REPLY_URL, {
     'headers': {
@@ -30,7 +33,7 @@ function reply(e: GoogleAppsScript.Events.DoPost, channelAccessToken: string, ch
       'replyToken': replyToken,
       'messages': [{
         'type': 'text',
-        'text': `${purpose}に${price}円の支出を登録しました\n\n【残りの予算】\n${createBudgetSummary(spreadSheetId)}`,
+        'text': `【登録内容】\n項目：${purpose}\n金額：${price}円\nメモ：\n${memo}\n\n【残りの予算】\n${createBudgetSummary(spreadSheetId)}`,
       }],
     }),
     });
@@ -44,10 +47,10 @@ function createBudgetSummary(spreadSheetId: string) {
   return budgets.map(line => `${line[0]}: ${line[4]}円`).join('\n');
 }
 
-function insertCreditCardUsage(timestamp, user, purpose, price, spreadSheetId: string) {
+function insertCreditCardUsage(timestamp, user, purpose, price, memo, spreadSheetId: string) {
   var spreadsheet = SpreadsheetApp.openById(spreadSheetId),
       accessLogSheet = spreadsheet.getSheetByName('credit_card_usage');
-  accessLogSheet.appendRow([timestamp, user, purpose, price]);
+  accessLogSheet.appendRow([timestamp, user, purpose, price, memo]);
 }
 
 
